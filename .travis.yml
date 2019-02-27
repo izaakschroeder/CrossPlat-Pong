@@ -10,7 +10,7 @@ matrix:
             - sdl2_image
             - sdl2_ttf
     - os: linux
-      dist: trusty
+      dist: xenial
       addons:
         apt:
           packages:
@@ -19,7 +19,7 @@ matrix:
             - libsdl2-ttf-dev
     - os: windows
       before_install:
-        - wget https://www.libsdl.org/release/SDL2-devel-2.0.9-VC.zip -o extern/SDL2.zip
+        - wget https://www.libsdl.org/release/SDL2-devel-2.0.9-VC.zip -O extern/SDL2.zip
         - cd extern
         - unzip SDL2.zip
         - ls

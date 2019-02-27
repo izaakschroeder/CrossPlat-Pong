@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.7)
 project (SDL2-Pong)
 
 if(WIN32)
-  include_directories(${PROJECT_SOURCE_DIR}/extern/sdl2/include)
-  link_directories(${PROJECT_SOURCE_DIR}/extern/sdl2/lib)
+  include_directories(${PROJECT_SOURCE_DIR}/extern/SDL2-2.0.9/include)
+  link_directories(${PROJECT_SOURCE_DIR}/extern/SDL2-2.0.9/lib)
 endif()
 
 if(APPLE)
