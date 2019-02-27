@@ -1,0 +1,20 @@
+matrix:
+  include:
+    - os: osx
+      osx_image: xxcode9.1
+    - os: linux
+      dist: trusty
+    - os: windows
+
+install:
+  - JOBS=2
+  - BUILD_TYPE=Release
+  - cmake --version
+
+before_script:
+  - cd "${TRAVIS_BUILD_DIR}"
+  - mkdir build && cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+script:
+  - cmake --build . -- -j${JOBS}
