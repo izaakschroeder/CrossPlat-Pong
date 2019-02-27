@@ -1,0 +1,29 @@
+# Qt Creator
+*.config
+*.files
+*.includes
+*.creator
+*.user
+
+# Object files
+*.o
+*.ko
+
+# Eclipse
+.cproject
+.project
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
