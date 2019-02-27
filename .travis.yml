@@ -11,6 +11,7 @@ matrix:
             - sdl2_ttf
     - os: linux
       dist: xenial
+      compiler: clang
       addons:
         apt:
           packages:
@@ -35,4 +36,4 @@ before_script:
   - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 script:
-  - cmake --build . -- -j${JOBS}
+  - cmake --build .
