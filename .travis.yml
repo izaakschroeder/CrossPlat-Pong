@@ -1,0 +1,43 @@
+language: cpp
+matrix:
+  include:
+    - os: osx
+      osx_image: xxcode9.1
+      addons:
+        homebrew:
+          packages:
+            - sdl2
+            - sdl2_image
+            - sdl2_ttf
+    - os: linux
+      dist: xenial
+      compiler: clang
+      addons:
+        apt:
+          packages:
+            - libsdl2-dev
+            - libsdl2-image-dev
+            - libsdl2-ttf-dev
+    - os: windows
+      before_install:
+        - wget https://www.libsdl.org/release/SDL2-devel-2.0.9-VC.zip -O extern/SDL2.zip
+        - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.4-VC.zip -O extern/SDL2_image.zip
+        - wget https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.15-VC.zip -O extern/SDL2_ttf.zip
+        - cd extern
+        - unzip SDL2.zip
+        - unzip SDL2_image.zip
+        - unzip SDL2_ttf.zip
+        - ls
+
+install:
+  - JOBS=2
+  - BUILD_TYPE=Release
+  - cmake --version
+
+before_script:
+  - cd "${TRAVIS_BUILD_DIR}"
+  - mkdir build && cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+script:
+  - cmake --build .

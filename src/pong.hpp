@@ -1,7 +1,11 @@
 #ifndef MAIN_HPP_
 #define MAIN_HPP_
 
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -18,6 +22,5 @@ const int BALL_HEIGHT = 10;
 
 void Initialise(SDL_Renderer **ren, SDL_Window **win);
 void Cleanup(SDL_Renderer **ren, SDL_Window **win, SDL_GameController **controller);
-
 
 #endif /* MAIN_HPP_ */
