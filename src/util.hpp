@@ -10,7 +10,9 @@
 
 void logSDLError(const std::string &msg, std::ostream &os = std::cerr)
 {
+#ifndef WIN32
     os << msg << " error: " << SDL_GetError() << std::endl;
+#endif
 }
 
 void sdl_bomb(const std::string &msg)
