@@ -21,8 +21,12 @@ matrix:
     - os: windows
       before_install:
         - wget https://www.libsdl.org/release/SDL2-devel-2.0.9-VC.zip -O extern/SDL2.zip
+        - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.4-VC.zip -O extern/SDL2_image.zip
+        - wget https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.15-VC.zip -O extern/SDL2_ttf.zip
         - cd extern
         - unzip SDL2.zip
+        - unzip SDL2_image.zip
+        - unzip SDL2_ttf.zip
         - ls
 
 install:
