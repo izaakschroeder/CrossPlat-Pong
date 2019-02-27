@@ -9,6 +9,7 @@ if(WIN32)
   link_directories(${PROJECT_SOURCE_DIR}/extern/SDL2_image-2.0.4/lib/x86)
   include_directories(${PROJECT_SOURCE_DIR}/extern/SDL2_ttf-2.0.15/include)
   link_directories(${PROJECT_SOURCE_DIR}/extern/SDL2_ttf-2.0.15/lib/x86)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
 endif()
 
 if(APPLE)
