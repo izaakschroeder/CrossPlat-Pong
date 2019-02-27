@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Starting Game Loop" << std::endl;
 
-    uint prevTime = SDL_GetTicks();
+    unsigned int prevTime = SDL_GetTicks();
     bool quit = false;
     int frames = 0;
     float fps;
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
         // FPS Calculation
         ++frames;
-        uint currTime = SDL_GetTicks();
+        unsigned int currTime = SDL_GetTicks();
         float elapsed = (currTime - prevTime);
 
         if (elapsed > 100)
