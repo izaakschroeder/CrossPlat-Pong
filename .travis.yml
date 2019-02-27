@@ -27,7 +27,6 @@ matrix:
 install:
   - JOBS=2
   - BUILD_TYPE=Release
-  - if []; then
   - cmake --version
 
 before_script:
