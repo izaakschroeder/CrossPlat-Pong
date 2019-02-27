@@ -7,6 +7,18 @@ matrix:
       dist: trusty
     - os: windows
 
+addons:
+  apt:
+    packages:
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libsdl2-ttf-dev
+  homebrew:
+    packages:
+      - sdl2
+      - sdl2_image
+      - sdl2_ttf
+
 install:
   - JOBS=2
   - BUILD_TYPE=Release
