@@ -3,14 +3,21 @@
 #include <iostream>
 #include <math.h>
 
+#ifdef WIN32
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#endif
 
 #include "pong.hpp"
 #include "util.hpp"
 
-typedef struct {
+typedef struct
+{
     float x;
     float y;
     float vx;
@@ -18,19 +25,22 @@ typedef struct {
     float speed;
 } ball;
 
-typedef struct {
+typedef struct
+{
     SDL_Rect pos;
     int score;
     int speed;
 } player;
 
-float calc_angle(float y1, float y2, int height) {
-    float rely = y1 + height/2 - y2;
-    rely /= height/2.0;   // Normalise
+float calc_angle(float y1, float y2, int height)
+{
+    float rely = y1 + height / 2 - y2;
+    rely /= height / 2.0; // Normalise
     return rely * MAX_ANGLE;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
 
     std::cout << "Starting SDL Application..." << std::endl;
     SDL_Event e;
@@ -40,10 +50,11 @@ int main(int argc, char* argv[]) {
 
     SDL_Haptic *haptic = nullptr;
 
-    Initialise(&ren,&win);
+    Initialise(&ren, &win);
 
     // Check for controller support
-    if (SDL_NumJoysticks() == 1 && SDL_IsGameController(0)) {
+    if (SDL_NumJoysticks() == 1 && SDL_IsGameController(0))
+    {
         controller = SDL_GameControllerOpen(0);
         std::cout << "Found a controller: " << SDL_GameControllerName(controller) << std::endl;
 
@@ -73,7 +84,7 @@ int main(int argc, char* argv[]) {
     b.x = SCREEN_WIDTH / 2;
     b.y = SCREEN_HEIGHT / 2;
     b.speed = BALL_INIT_SPEED;
-    b.vx = (rand() % 2 == 0)? BALL_INIT_SPEED : -1 * BALL_INIT_SPEED;
+    b.vx = (rand() % 2 == 0) ? BALL_INIT_SPEED : -1 * BALL_INIT_SPEED;
     b.vy = -0.5f;
 
     p1.score = p2.score = 0;
@@ -82,11 +93,11 @@ int main(int argc, char* argv[]) {
     p1.speed = 10;
     p2.speed = 3.5;
 
-    p1.pos.x = board_width/2 + 10;
-    p2.pos.x = SCREEN_WIDTH - p2.pos.w- 10 - p2.pos.w/2;
+    p1.pos.x = board_width / 2 + 10;
+    p2.pos.x = SCREEN_WIDTH - p2.pos.w - 10 - p2.pos.w / 2;
 
-    p1.pos.y = SCREEN_HEIGHT/2 - p1.pos.h/2;
-    p2.pos.y = SCREEN_HEIGHT/2 - p2.pos.h/2;
+    p1.pos.y = SCREEN_HEIGHT / 2 - p1.pos.h / 2;
+    p2.pos.y = SCREEN_HEIGHT / 2 - p2.pos.h / 2;
 
     std::cout << "Starting Game Loop" << std::endl;
 
@@ -97,23 +108,29 @@ int main(int argc, char* argv[]) {
     char buffer[512];
     const Uint8 *keystates = SDL_GetKeyboardState(NULL);
 
-    while(!quit) {
+    while (!quit)
+    {
 
         // FPS Calculation
         ++frames;
         uint currTime = SDL_GetTicks();
         float elapsed = (currTime - prevTime);
 
-        if(elapsed > 100) {
+        if (elapsed > 100)
+        {
             fps = round(frames / (elapsed / 1000.0));
             frames = 0;
             prevTime = currTime;
         }
 
-        while(SDL_PollEvent(&e)) {
-            if(e.type == SDL_QUIT)  quit = true;
-            if(e.type == SDL_KEYDOWN) {
-                switch(e.key.keysym.scancode) {
+        while (SDL_PollEvent(&e))
+        {
+            if (e.type == SDL_QUIT)
+                quit = true;
+            if (e.type == SDL_KEYDOWN)
+            {
+                switch (e.key.keysym.scancode)
+                {
                 case SDL_SCANCODE_ESCAPE:
                     quit = true;
                     break;
@@ -124,29 +141,32 @@ int main(int argc, char* argv[]) {
         Uint8 upButton = 0;
         Uint8 downButton = 0;
 
-        if(controller) {
+        if (controller)
+        {
             downButton = SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN);
             upButton = SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP);
         }
 
         // Player Movement
-        if(keystates[SDL_SCANCODE_UP] || upButton)
+        if (keystates[SDL_SCANCODE_UP] || upButton)
             p1.pos.y -= p1.speed;
-        if(keystates[SDL_SCANCODE_DOWN] || downButton)
+        if (keystates[SDL_SCANCODE_DOWN] || downButton)
             p1.pos.y += p1.speed;
 
         // Basic AI
-        if(b.y < p2.pos.y + p2.pos.h/2) {
+        if (b.y < p2.pos.y + p2.pos.h / 2)
+        {
             p2.pos.y -= p2.speed;
         }
-        if(b.y > p2.pos.y + p2.pos.h/2) {
+        if (b.y > p2.pos.y + p2.pos.h / 2)
+        {
             p2.pos.y += p2.speed;
         }
 
-        if(b.vx > BALL_MAXSPEED)
+        if (b.vx > BALL_MAXSPEED)
             b.vx = BALL_MAXSPEED;
 
-        if(b.vy > BALL_MAXSPEED)
+        if (b.vy > BALL_MAXSPEED)
             b.vy = BALL_MAXSPEED;
 
         // Update Ball coordinates
@@ -154,51 +174,60 @@ int main(int argc, char* argv[]) {
         b.y += b.vy;
 
         // Boundary Collision
-        if(b.y < 0) {
+        if (b.y < 0)
+        {
             b.y = 0;
             b.vy *= -1;
         }
-        if(b.y + BALL_HEIGHT >= SCREEN_HEIGHT) {
+        if (b.y + BALL_HEIGHT >= SCREEN_HEIGHT)
+        {
             b.y = SCREEN_HEIGHT - BALL_HEIGHT - 1;
             b.vy *= -1;
         }
 
-        if(b.x < 0) {
+        if (b.x < 0)
+        {
 
-            if(haptic)
+            if (haptic)
                 SDL_HapticRumblePlay(haptic, 0.7, 1000);
 
             p2.score += 1;
             b.x = p1.pos.x + p1.pos.w;
-            b.y = p1.pos.y + p1.pos.h/2;
+            b.y = p1.pos.y + p1.pos.h / 2;
             b.vx = BALL_INIT_SPEED;
             b.speed = BALL_INIT_SPEED;
         }
-        if(b.x + BALL_WIDTH>= SCREEN_WIDTH) {
+        if (b.x + BALL_WIDTH >= SCREEN_WIDTH)
+        {
 
-            if(haptic)
+            if (haptic)
                 SDL_HapticRumblePlay(haptic, 0.7, 1000);
 
             p1.score += 1;
             b.x = p2.pos.x - BALL_WIDTH;
-            b.y = p2.pos.y + p2.pos.h/2;
+            b.y = p2.pos.y + p2.pos.h / 2;
             b.vx = -1 * BALL_INIT_SPEED;
             b.speed = BALL_INIT_SPEED;
         }
 
-        if(p1.pos.y < 0) p1.pos.y = 0;
-        if(p1.pos.y + p1.pos.h > SCREEN_HEIGHT) p1.pos.y = SCREEN_HEIGHT - p1.pos.h;
-        if(p2.pos.y < 0) p2.pos.y = 0;
-        if(p2.pos.y + p2.pos.h > SCREEN_HEIGHT) p2.pos.y = SCREEN_HEIGHT - p2.pos.h;
+        if (p1.pos.y < 0)
+            p1.pos.y = 0;
+        if (p1.pos.y + p1.pos.h > SCREEN_HEIGHT)
+            p1.pos.y = SCREEN_HEIGHT - p1.pos.h;
+        if (p2.pos.y < 0)
+            p2.pos.y = 0;
+        if (p2.pos.y + p2.pos.h > SCREEN_HEIGHT)
+            p2.pos.y = SCREEN_HEIGHT - p2.pos.h;
 
         // Update the b_rect structure
-        b_rect.x = (int) b.x;
-        b_rect.y = (int) b.y;
+        b_rect.x = (int)b.x;
+        b_rect.y = (int)b.y;
 
         // Player Collision
-        if(SDL_HasIntersection(&p1.pos, &b_rect)) {
+        if (SDL_HasIntersection(&p1.pos, &b_rect))
+        {
 
-            if(haptic)
+            if (haptic)
                 SDL_HapticRumblePlay(haptic, 0.5, 200);
 
             b.x = p1.pos.x + p1.pos.w;
@@ -207,11 +236,12 @@ int main(int argc, char* argv[]) {
 
             float angle = calc_angle(p1.pos.y, b.y, p1.pos.h);
             b.vx = b.speed * cos(angle);
-            b.vy = ((b.vy>0)? -1 : 1) * b.speed * sin(angle);
+            b.vy = ((b.vy > 0) ? -1 : 1) * b.speed * sin(angle);
         }
-        if(SDL_HasIntersection(&p2.pos, &b_rect)) {
+        if (SDL_HasIntersection(&p2.pos, &b_rect))
+        {
 
-            if(haptic)
+            if (haptic)
                 SDL_HapticRumblePlay(haptic, 0.5, 200);
 
             b.x = p2.pos.x - BALL_WIDTH;
@@ -220,7 +250,7 @@ int main(int argc, char* argv[]) {
 
             float angle = calc_angle(p2.pos.y, b.y, p2.pos.h);
             b.vx = -1 * b.speed * cos(angle);
-            b.vy = ((b.vy>0)? -1 : 1) * b.speed * sin(angle);
+            b.vy = ((b.vy > 0) ? -1 : 1) * b.speed * sin(angle);
         }
 
         SDL_RenderClear(ren);
@@ -229,7 +259,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderCopy(ren, squareTex, NULL, &p2.pos);
 
         // Draw the center line
-        renderTexture(squareTex, ren, SCREEN_WIDTH/2 - CENTER_WIDTH/2, 0, CENTER_WIDTH, SCREEN_HEIGHT);
+        renderTexture(squareTex, ren, SCREEN_WIDTH / 2 - CENTER_WIDTH / 2, 0, CENTER_WIDTH, SCREEN_HEIGHT);
 
         // Draw the Ball
         renderTexture(squareTex, ren, b.x, b.y, BALL_WIDTH, BALL_HEIGHT);
@@ -243,8 +273,8 @@ int main(int argc, char* argv[]) {
         int width;
         SDL_QueryTexture(p1score, NULL, NULL, &width, NULL);
 
-        renderTexture(p1score, ren, SCREEN_WIDTH/2 - width - 10, 10);
-        renderTexture(p2score, ren, SCREEN_WIDTH/2 + 10, 10);
+        renderTexture(p1score, ren, SCREEN_WIDTH / 2 - width - 10, 10);
+        renderTexture(p2score, ren, SCREEN_WIDTH / 2 + 10, 10);
 
         SDL_DestroyTexture(p1score);
         SDL_DestroyTexture(p2score);
@@ -258,7 +288,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderPresent(ren);
     }
 
-    if(haptic)
+    if (haptic)
         SDL_HapticClose(haptic);
 
     SDL_DestroyTexture(squareTex);
@@ -266,32 +296,33 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void Initialise(SDL_Renderer **ren, SDL_Window **win) {
-    if(SDL_Init(SDL_INIT_EVERYTHING) == -1)
+void Initialise(SDL_Renderer **ren, SDL_Window **win)
+{
+    if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
         sdl_bomb("Failed to Initialise SDL");
 
     *win = SDL_CreateWindow(
-                "SDL Pong by Michael Aquilina",
-                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                SCREEN_WIDTH, SCREEN_HEIGHT,
-                SDL_WINDOW_SHOWN
-                );
-    if(*win == nullptr)
+        "SDL Pong by Michael Aquilina",
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        SDL_WINDOW_SHOWN);
+    if (*win == nullptr)
         sdl_bomb("Failed to create SDL Window");
 
     *ren = SDL_CreateRenderer(*win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if(*ren == nullptr)
+    if (*ren == nullptr)
         sdl_bomb("Failed to create SDL Renderer");
 
     const int flags = IMG_INIT_PNG | IMG_INIT_JPG;
-    if(IMG_Init(flags) !=flags)
+    if (IMG_Init(flags) != flags)
         sdl_bomb("Failed to load the Image loading extensions");
 
-    if(TTF_Init() != 0)
+    if (TTF_Init() != 0)
         sdl_bomb("Failed to load TTF extension");
 }
 
-void Cleanup(SDL_Renderer **ren, SDL_Window **win, SDL_GameController **controller) {
+void Cleanup(SDL_Renderer **ren, SDL_Window **win, SDL_GameController **controller)
+{
     SDL_DestroyRenderer(*ren);
     SDL_DestroyWindow(*win);
     SDL_GameControllerClose(*controller);

@@ -3,25 +3,31 @@ matrix:
   include:
     - os: osx
       osx_image: xxcode9.1
+      addons:
+        homebrew:
+          packages:
+            - sdl2
+            - sdl2_image
+            - sdl2_ttf
     - os: linux
       dist: trusty
+      addons:
+        apt:
+          packages:
+            - libsdl2-dev
+            - libsdl2-image-dev
+            - libsdl2-ttf-dev
     - os: windows
-
-addons:
-  apt:
-    packages:
-      - libsdl2-dev
-      - libsdl2-image-dev
-      - libsdl2-ttf-dev
-  homebrew:
-    packages:
-      - sdl2
-      - sdl2_image
-      - sdl2_ttf
+      before_install:
+        - wget https://www.libsdl.org/release/SDL2-devel-2.0.9-VC.zip -o extern/SDL2.zip
+        - cd extern
+        - unzip SDL2.zip
+        - ls
 
 install:
   - JOBS=2
   - BUILD_TYPE=Release
+  - if []; then
   - cmake --version
 
 before_script:

@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 3.7)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
 project (SDL2-Pong)
 
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_ttf REQUIRED)
+if(WIN32)
+  include_directories(${PROJECT_SOURCE_DIR}/extern/sdl2/include)
+  link_directories(${PROJECT_SOURCE_DIR}/extern/sdl2/lib)
+endif()
 
-include_directories(${SDL2_INCLUDE_DIR}
-                    ${SDL2_IMAGE_INCLUDE_DIR}
-                    ${SDL2_TTF_INCLUDE_DIR})
-target_link_libraries(target ${SDL2_LIBRARY}
-                             ${SDL2_IMAGE_LIBRARIES}
-                             ${SDL2_TTF_LIBRARIES})
-
+if(APPLE)
+  include_directories(/usr/local/include)
+  link_directories(/usr/local/lib)
+endif()
 
 add_executable(pong ./src/pong.cpp)
+target_link_libraries(pong SDL2 SDL2_image SDL2_ttf)
+
+
